@@ -13,6 +13,8 @@ class Database:
     
     @classmethod 
     def GetInstance(cls):
+        if cls._instance is None:
+            cls()
         return cls._instance.db
 
 

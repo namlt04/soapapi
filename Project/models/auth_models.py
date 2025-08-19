@@ -1,6 +1,6 @@
 
 
-from spyne import Unicode, Int, Interater, ComplexModel, Boolean
+from spyne import Unicode, Int, ComplexModel, Boolean
 
 class LoginRequest(ComplexModel): 
     username = Unicode 
