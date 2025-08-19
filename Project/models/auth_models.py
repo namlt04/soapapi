@@ -3,7 +3,7 @@
 from spyne import Unicode, Int, ComplexModel, Boolean
 
 class LoginRequest(ComplexModel): 
-    username = Unicode 
+    username = Unicode  # Tra id_customer
     password = Unicode 
 
 class LoginResponse(ComplexModel):

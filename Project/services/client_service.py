@@ -4,7 +4,7 @@ from spyne import ServiceBase, Unicode, Boolean, rpc, Iterable
 from pymongo import MongoClient
 from services.database import Database
 from pymongo.errors import PyMongoError
-from datetime import datetime
+from datetime import datetime, timedelta
 import jwt 
 
 salt = "salt" 
@@ -12,35 +12,27 @@ from models.auth_models import LoginRequest, LoginResponse, RegisterRequest, Reg
 class ClientService(ServiceBase):
     @rpc(LoginRequest, _returns=LoginResponse)
     def Login(ctx,req):
-        try:
-            doc = Database.GetInstance().clients.find_one( {"username": req.username})
-        except PyMongoError as e : 
-            return LoginResponse(status=False, message = "Username khong ton tai")
+        doc = Database.GetInstance().clients.find_one( {"id_customer": req.username})
+
+        if (doc is None):
+            return LoginResponse(status=False, message="Sai ten dang nhap ")
 
         db_password = doc["password"] 
-        if bcrypt.checkpwd(db_password, req.password):
+        #
+        if bcrypt.checkpw(req.password.encode("utf-8"),db_password.encode("utf-8")):
             # Create jwt 
             payload = {
                 "id_customer" : doc["id_customer"],
-                 "time" : datetime.now() + datetime.timedelta(days= 5) 
+                 "exp" : datetime.now() + timedelta(days=5)
             } 
             token = jwt.encode(payload, salt, algorithm="HS256")
 
-            # save token in database 
-            try:
-                res = Database.GetInstance().clients.find_one({"id_customer" : doc["id_customer"]})
-                Database.GetInstance().clients.update_one({ "id_customer" : doc["id_customer"] }, {"$set" : {"session_key" : token}})
-            except PyMongoError as e: 
-                data = {
-                    "id_customer" : doc["id_customer"], 
-                    "session_key" : token
-                }
-                Database.GetInstance().clients.update_one({"id_customer" : doc["id_customer"]}, { "$set" : data})
-
+            Database.GetInstance().clients.update_one({ "id_customer" : req.username }, {"$set" : {"session_key" : token}})
+           
             return LoginResponse(
-                status=True, message="", id_customer=doc["id_customer"], fullname=doc["fullname"], phone=doc["phone"], session_key=token,
+                status=True, id_customer=doc["id_customer"], fullname=doc["fullname"], phone=doc["phone"], session_key=token,
             ) 
-        return LoginResponse ( status=True, message = "Mat khau khong chinh xac")
+        return LoginResponse ( status=False, message = "Mat khau khong chinh xac")
 
     @rpc(RegisterRequest, _returns=RegisterResponse)
     def Register(ctx,req):
@@ -55,12 +47,10 @@ class ClientService(ServiceBase):
                 "id_customer" : req.id_customer, 
                 "fullname" : req.fullname,
                 "email" : req.email, 
+                "phone" : req.phone, 
                 "password" : hash_password.decode()
             }
-            try :
-                result = Database.GetInstance().clients.insert_one(data)
-            except PyMongoError as e:
-                print("Error : " , e)
+            result = Database.GetInstance().clients.insert_one(data)
             return RegisterResponse(status=True, message="Dang ki thanh cong") 
 
 
