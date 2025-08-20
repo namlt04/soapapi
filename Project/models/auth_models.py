@@ -13,6 +13,7 @@ class LoginResponse(ComplexModel):
     fullname = Unicode 
     phone = Unicode 
     session_key = Unicode
+    dotp = Boolean
 
 class RegisterRequest(ComplexModel):
     phone = Unicode 

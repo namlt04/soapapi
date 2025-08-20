@@ -18,7 +18,6 @@ class ClientService(ServiceBase):
             return LoginResponse(status=False, message="Sai ten dang nhap ")
 
         db_password = doc["password"] 
-        #
         if bcrypt.checkpw(req.password.encode("utf-8"),db_password.encode("utf-8")):
             # Create jwt 
             payload = {
@@ -27,10 +26,14 @@ class ClientService(ServiceBase):
             } 
             token = jwt.encode(payload, salt, algorithm="HS256")
 
-            Database.GetInstance().clients.update_one({ "id_customer" : req.username }, {"$set" : {"session_key" : token}})
-           
+            res = Database.GetInstance().clients.find_one_and_update({ "id_customer" : req.username }, {"$set" : {"session_key" : token}})
+            if ( "dotp" in res ): 
+                dotp = True
+            else :
+                dotp = False
+
             return LoginResponse(
-                status=True, id_customer=doc["id_customer"], fullname=doc["fullname"], phone=doc["phone"], session_key=token,
+                status=True, id_customer=doc["id_customer"], fullname=doc["fullname"], phone=doc["phone"], session_key=token, dotp=dotp
             ) 
         return LoginResponse ( status=False, message = "Mat khau khong chinh xac")
 
@@ -56,14 +59,13 @@ class ClientService(ServiceBase):
 
     @rpc(RegisterDOtpRequest,  _returns=RegisterDOtpResponse)
     def RegisterDOtp(ctx, req): 
-        try:
-            doc = Database.GetInstance().clients.find_one({"id_customer" : req.id_customer}) 
-            if doc["session_key"] == req.session_key :  
-                Database.GetInstance().clients.insert_one( { "id" : id} , { "$set" : {"dotp" : req.dotp}})
-                return RegisterDOtpResponse(status=True, message="Dang ki dotp thanh cong")
-            return RegisterDOtpResponse(status=False, message = "Xac thuc khong thanh cong")
-        except PyMongoError as e:
-            return RegisterDOtpResponse(status=False, message = "None")
+        doc = Database.GetInstance().clients.find_one({"id_customer" : req.id_customer}) 
+        if doc["session_key"] == req.session_key :  
+            plain_dotp = req.dotp.encode("utf-8")
+            hash_dotp = bcrypt.hashpw(plain_dotp, bcrypt.gensalt())
+            Database.GetInstance().clients.update_one( { "id_customer" : req.id_customer} , { "$set" : {"dotp" : hash_dotp.decode()}})
+            return RegisterDOtpResponse(status=True, message="Dang ki dotp thanh cong")
+        return RegisterDOtpResponse(status=False, message = "Xac thuc khong thanh cong")
     
     
     # def ForgetPassword():

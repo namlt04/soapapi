@@ -1,0 +1,114 @@
+// Đăng nhập
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ban="http://thanhnam.com/banking"
+                  xmlns:auth="models.auth_models">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ban:Login>
+         <ban:req>
+            <auth:username>C12346</auth:username>
+            <auth:password>123456</auth:password>
+         </ban:req>
+      </ban:Login>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+// liet ke cac tai khoan 
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ban="http://thanhnam.com/banking"
+                  xmlns:account="models.auth_models">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ban:ListNumberAccount>
+         <ban:req>
+            <account:username>C12346</account:username>
+            <account:session_key>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6IkMxMjM0NiIsImV4cCI6MTc1NjE1NjExM30.6wUf6n2B1QorpLYbqTQ7XdO-ILvJeUISKgZG8D9meyU</account:session_key>
+         </ban:req>
+      </ban:ListNumberAccount>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+// Dang ki tai khoan
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ban="http://thanhnam.com/banking"
+                  xmlns:auth="models.auth_models">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ban:Register>
+         <ban:req>
+            <auth:phone>0987654321</auth:phone>
+            <auth:fullname>Nguyen Van A</auth:fullname>
+            <auth:id_customer>C12346</auth:id_customer>
+            <auth:password>123456</auth:password>
+            <auth:email>test@example.com</auth:email>
+         </ban:req>
+      </ban:Register>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+# dang ki otp
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ban="http://thanhnam.com/banking"
+                  xmlns:account="models.auth_models">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ban:RegisterDOtp>
+         <ban:req>
+            <account:id_customer>C12346</account:id_customer>
+            <account:dotp>112112</account:dotp>
+            <account:session_key>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6IkMxMjM0NiIsImV4cCI6MTc1NjE1ODYxNn0.mjNDjHED0zChyJYCHBLUzKHFc2Zb0n_kGfk84AW8TMY</account:session_key>
+            
+         </ban:req>
+      </ban:RegisterDOtp>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+# chuyen khoan
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ban="http://thanhnam.com/banking"
+                  xmlns:trans="models.transaction_models">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ban:BankTransfer>
+         <ban:req>
+            <trans:number_account_send>225512456</trans:number_account_send>
+            <trans:bank_name_send>namltbanking</trans:bank_name_send>
+            <trans:number_account_receive>31012004</trans:number_account_receive>
+            <trans:bank_name_receive>namltbanking</trans:bank_name_receive>
+    
+            <trans:session_key>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6IkMxMjM0NiIsImV4cCI6MTc1NjE1ODYxNn0.mjNDjHED0zChyJYCHBLUzKHFc2Zb0n_kGfk84AW8TMY</trans:session_key>
+            <trans:value>15000</trans:value>
+            <trans:d_otp>112112</trans:d_otp>
+            <trans:content>khong co j</trans:content>
+            
+         </ban:req>
+      </ban:BankTransfer>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+# tao them number account
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ban="http://thanhnam.com/banking"
+                  xmlns:account="models.account_models">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ban:CreateAccount>
+         <ban:req>
+            <account:id_customer>C12346</account:id_customer>
+            <account:dotp>112112</account:dotp>
+            <account:number_account>225512456</account:number_account>
+            <account:session_key>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9jdXN0b21lciI6IkMxMjM0NiIsImV4cCI6MTc1NjE1ODYxNn0.mjNDjHED0zChyJYCHBLUzKHFc2Zb0n_kGfk84AW8TMY</account:session_key>
+            
+         </ban:req>
+      </ban:CreateAccount>
+   </soapenv:Body>
+</soapenv:Envelope>

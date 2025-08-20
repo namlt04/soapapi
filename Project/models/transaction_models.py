@@ -8,6 +8,7 @@ class BankTransferRequest(ComplexModel):
     number_account_receive= Unicode
     bank_name_receive = Unicode
     session_key = Unicode 
+    value =Int
     d_otp = Unicode 
     content = Unicode 
 
